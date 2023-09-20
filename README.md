@@ -42,6 +42,14 @@ Con mongoose nos permitira trabajar de una fomra mas comoda con mongodb
 ```bash
 npm install mongoose --save
 ```
+Con mongoose-pagination, nos permite realizar paginaciones
+```bash
+npm install mongoose-pagination --save
+```
+Con moment podremos modificar fechas
+```bash
+npm install moment --save
+```
 Seria interesante tener una libreria que nos permita subir archivos, ya sea imagenes o cualquier otro tipo de fichero
 ```bash
 npm install multer --save
@@ -49,6 +57,14 @@ npm install multer --save
 Una libreria que nos permita validar datos
 ```bash
 npm install validator --save
+```
+Si necesitamos cifrar contraseñas
+```bash
+npm install bcrypt --save
+```
+Para la autenticacion necesitamos un paquete de jwt
+```bash
+npm install jwt-simple --save
 ```
 Para evitar errores con las CORS 
 ```bash
