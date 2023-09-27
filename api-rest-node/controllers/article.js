@@ -29,7 +29,7 @@ const add = async (req, res) => {
 
     /* Devolver resultado */
     return res.status(200).json({
-        mensaje: "success",
+        status: "success",
         article: articleSave
     });
 }
@@ -223,12 +223,12 @@ const search = async(req, res) => {
     let search = req.params.search;
 
     /* Find Or */
-    const article = await Article.find({ "$or": [
+    const articles = await Article.find({ "$or": [
         { "title": { "$regex": search, "$options": "i" } },
         { "content": { "$regex": search, "$options": "i" } },
     ]}).sort({ date: -1 }).exec();
 
-    if (!article || article.length <= 0) {
+    if (!articles || articles.length <= 0) {
         return res.status(404).json({
             status: "error",
             mensaje: "No se han encontrado articulos"
@@ -237,7 +237,7 @@ const search = async(req, res) => {
 
     return res.status(200).json({
         status: "success",
-        article: article
+        articles: articles
     });
 }
 
