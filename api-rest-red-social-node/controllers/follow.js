@@ -82,16 +82,16 @@ const following = async (req, res) => {
         let page = 1
         if (req.params.page) page = parseInt(req.params.page);
 
-        const total = await Follow.countDocuments({ user: userId });
-
         /* Usuarios por pagina quiero mostrar */
         const itemPerPage = 5;
         /* Find a follow, popular datos de los usuarios y paginar con mongoose pagination */
-        const follow = await Follow.find({ user: userId })
+        const follows = await Follow.find({ user: userId })
             .populate("user followed", "-password -role -__v -email")
             .skip((page - 1) * itemPerPage)
             .limit(itemPerPage)
             .exec();
+
+        const total = await Follow.countDocuments({ user: userId });
 
         /* Sacar un array de ids de los usuarios que me siguen y los que sigo como usuario */
         let followUserIds = await followService.followUserIds(req.user.id);
@@ -99,7 +99,7 @@ const following = async (req, res) => {
         return res.status(200).json({
             status: 'success',
             message: "Listado de usuarios que estoy siguiendo",
-            follow,
+            follows,
             total,
             page: Math.ceil(total / itemPerPage),
             user_following: followUserIds.following,
@@ -124,12 +124,12 @@ const followers = async(req, res) => {
         let page = 1
         if (req.params.page) page = parseInt(req.params.page);
 
-        const total = await Follow.countDocuments({ user: userId });
+        const total = await Follow.countDocuments({ followed: userId });
 
         /* Usuarios por pagina quiero mostrar */
         const itemPerPage = 5;
         /* Find a follow, popular datos de los usuarios y paginar con mongoose pagination */
-        const follow = await Follow.find({ followed: userId })
+        const follows = await Follow.find({ followed: userId })
             .populate("user", "-password -role -__v -email")
             .skip((page - 1) * itemPerPage)
             .limit(itemPerPage)
@@ -141,7 +141,7 @@ const followers = async(req, res) => {
         return res.status(200).json({
             status: 'success',
             message: "Listado de usuarios que me siguen",
-            follow,
+            follows,
             total,
             page: Math.ceil(total / itemPerPage),
             user_following: followUserIds.following,

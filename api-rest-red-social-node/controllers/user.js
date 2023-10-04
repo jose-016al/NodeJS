@@ -10,17 +10,25 @@ const mongoosePagination = require("mongoose-pagination");
 /* Importar servicios */
 const jwt = require("../services/jwt");
 const followService = require("../services/followService");
+const validate = require('../helpers/validate');
 
 const register = async (req, res) => {
+    /* Recoger datos de la peticion */
+    let params = req.body;
+
+    /* Comprobar que me llegen bien (+ validacion) */
+    if (!params.name || !params.email || !params.password || !params.nick) {
+        return res.status(400).json({ status: "error", message: "Faltan datos por enviar", });
+    }
+    
+    /* Validacion avanzada */
     try {
-        /* Recoger datos de la peticion */
-        let params = req.body;
-
-        /* Comprobar que me llegen bien (+ validacion) */
-        if (!params.name || !params.email || !params.password || !params.nick) {
-            return res.status(400).json({ status: "error", message: "Faltan datos por enviar", });
-        }
-
+        validate(params);
+    } catch (error) {
+        return res.status(400).json({ status: "error", message: "Validacion no superada", });
+    }
+    
+    try {
         /* Control usuarios duplicados */
         const duplicateUser = await User.find({
             $or: [
@@ -30,7 +38,7 @@ const register = async (req, res) => {
         }).exec();
 
         if (duplicateUser && duplicateUser.length >= 1) {
-            return res.status(200).send({ status: "success", message: "El usuario ya existe", });
+            return res.status(200).send({ status: "error", message: "El usuario ya existe", });
         }
         /* Cifrar la contraseña */
         let pwd = await bcrypt.hash(params.password, 10);

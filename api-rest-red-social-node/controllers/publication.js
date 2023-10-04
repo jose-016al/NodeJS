@@ -90,38 +90,36 @@ const remove = async (req, res) => {
 
 /* Listar publicaciones de un usuario */
 const user = async (req, res) => {
-    /* Sacar el id del usuario */
-    const userId = req.params.id
-
-    /* Controlar la pagina */
-    let page = 1
-    if (req.params.page) page = parseInt(req.params.page);
-    const total = await Publication.countDocuments({ "user": userId });
-
-    /* Find, pupulate, ordenar, paginar */
-    const itemPerPage = 5;
-
-    const publications = await Publication.find({ user: userId })
-        /* .populate("user", "-password -role -__v") */
-        .sort("-created_at")
-        .skip((page - 1) * itemPerPage)
-        .limit(itemPerPage)
-        .exec();
-
-    if (!publications || publications.length <= 1) {
-        return res.status(404).json({ status: 'error', message: "No se han encontrado publiaciones" });
-    }
-
-    /* Devolver respuesta */
-    return res.status(200).json({
-        status: 'success',
-        message: "Publicaciones del usuario",
-        page,
-        total,
-        pages: Math.ceil(total / itemPerPage),
-        publications
-    });
     try {
+        /* Sacar el id del usuario */
+        const userId = req.params.id
+    
+        /* Controlar la pagina */
+        let page = 1
+        if (req.params.page) page = parseInt(req.params.page);
+        const total = await Publication.countDocuments({ "user": userId });
+    
+        /* Find, pupulate, ordenar, paginar */
+        const itemPerPage = 5;
+    
+        const publications = await Publication.find({ user: userId })
+            .populate("user", "-password -role -__v")
+            .sort("-created_at")
+            .skip((page - 1) * itemPerPage)
+            .limit(itemPerPage)
+            .exec();
+    
+        
+    
+        /* Devolver respuesta */
+        return res.status(200).json({
+            status: 'success',
+            message: "Publicaciones del usuario",
+            page,
+            total,
+            pages: Math.ceil(total / itemPerPage),
+            publications
+        });
     } catch (error) {
         return res.status(500).json({ status: 'error', message: "Error en el servidor" });
     }
